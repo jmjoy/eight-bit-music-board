@@ -1,0 +1,7 @@
+MEMORY
+{
+  /* NOTE K = KiBi = 1024 bytes */
+  /* STM32F030K6 has 32K flash and 4K RAM */
+  FLASH : ORIGIN = 0x08000000, LENGTH = 32K
+  RAM : ORIGIN = 0x20000000, LENGTH = 4K
+}
