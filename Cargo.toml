@@ -1,7 +1,11 @@
 [package]
 name = "eight-bit-music-board"
+description = "8-bit音乐板（不是）"
+authors = ["jmjoy <jmjoy@qq.com>"]
 version = "0.1.0"
 edition = "2024"
+license = "MulanPSL-2.0"
+repository = "https://github.com/jmjoy/eight-bit-music-board"
 
 [dependencies]
 cortex-m = { version = "0.7.7", features = ["inline-asm", "critical-section-single-core"] }
