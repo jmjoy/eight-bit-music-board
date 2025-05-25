@@ -82,6 +82,7 @@ impl<'a> Music<'a> {
         if TURN_STATE.swap(false, Ordering::SeqCst) {
             info!("暂停！");
             loop {
+                cortex_m::asm::wfi();
                 if TURN_STATE.swap(false, Ordering::SeqCst) {
                     info!("继续！");
                     break Ok(());
