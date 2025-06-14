@@ -27,29 +27,13 @@ impl<'a> Music<'a> {
         info!("开始播放《{}》……", self.name);
         delay.delay_ms(300u16);
 
+        let channels = unsafe { PWM3_CHANNELS.channels_mut() };
+
         for &(freq, duration) in self.melody {
             self.check_should_stop()?;
 
-            if freq == RST {
-                // 休止符：禁用PWM
-                let channels = unsafe { PWM3_CHANNELS.channels_mut() };
-                channels.3.disable();
-                delay.delay_ms(duration);
-            } else {
-                // 播放音符：设置频率并启用PWM
-                unsafe {
-                    PWM3_CHANNELS.set_freq(rcc, (freq as u32).hz());
-                }
-                let channels = unsafe { PWM3_CHANNELS.channels_mut() };
-                channels.3.set_duty(channels.3.get_max_duty() / 2);
-                channels.3.enable();
-                delay.delay_ms(duration);
-            }
-
+            // 灯光
             {
-                let channels = unsafe { PWM3_CHANNELS.channels_mut() };
-                channels.3.disable();
-
                 channels
                     .0
                     .set_duty(channels.0.get_max_duty() / (freq % 7 + 1));
@@ -61,8 +45,25 @@ impl<'a> Music<'a> {
                     .set_duty(channels.2.get_max_duty() / (freq % 9 + 1));
             }
 
+            if freq == RST {
+                // 休止符：禁用PWM
+                channels.3.disable();
+                delay.delay_ms(duration);
+            } else {
+                // 播放音符：设置频率并启用PWM
+                unsafe {
+                    PWM3_CHANNELS.set_freq(rcc, (freq as u32).hz());
+                }
+                channels.3.set_duty(channels.3.get_max_duty() / 2);
+                channels.3.enable();
+                delay.delay_ms(duration);
+            }
+
             // 间隔
-            delay.delay_ms(10u8);
+            {
+                channels.3.disable();
+                delay.delay_ms(10u8);
+            }
         }
 
         {
